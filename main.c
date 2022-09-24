@@ -1,13 +1,11 @@
-#include <stdio.h>
 #include "Matrix.h"
 
 int main() {
     Matrix *m = CreateMatrix(3, 2);
     m->PrintFullMatrix(m);
-    Matrix *nm = m->T(m);
-    printf("Hello, World!\n");
+    Matrix *nm = m->Copy(m);
     nm->PrintFullMatrix(nm);
-    deleteMatrix(m);
-    deleteMatrix(nm);
+    DeleteMatrix(m);
+    DeleteMatrix(nm);
     return 0;
 }

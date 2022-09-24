@@ -2,32 +2,32 @@
 
 struct Matrix;
 
-typedef void (*VoidOperation)(struct Matrix *m);
-typedef struct Matrix* (*ReturnMatrixOperation)(struct Matrix *m);
-typedef float (*ReturnFloatOperation)(struct Matrix *m);
-typedef int (*ReturnIntOperation)(struct Matrix *m);
+typedef void (*VoidOperationZeroParams)(struct Matrix*);
+typedef void (*VoidOperationOneFloatParam)(struct Matrix*, float);
+typedef struct Matrix* (*ReturnMatrixOperation)(struct Matrix*);
+typedef float (*ReturnFloatOperation)(struct Matrix*);
+typedef int (*ReturnIntOperation)(struct Matrix*);
 
 typedef struct Matrix {
     float **matrix;
     int _rows;
     int _columns;
 
-    VoidOperation PrintFullMatrix;
-    VoidOperation PrintNumOfRows;
-    VoidOperation PrintNumOfColumns;
-    VoidOperation Delete;
+    VoidOperationZeroParams PrintFullMatrix;
+    VoidOperationZeroParams PrintNumOfRows;
+    VoidOperationZeroParams PrintNumOfColumns;
+
+    VoidOperationOneFloatParam AddValue;
+    VoidOperationOneFloatParam SubtractValue;
+    VoidOperationOneFloatParam MultiplyByValue;
+    VoidOperationOneFloatParam DivideByValue;
+
     ReturnIntOperation GetNumOfRows;
     ReturnIntOperation GetNumOfColumns;
     ReturnFloatOperation Determinant;
     ReturnMatrixOperation T;
+    ReturnMatrixOperation Copy;
 } Matrix;
 
-Matrix *CreateMatrix(int n, int m);
-Matrix *transpose(struct Matrix *m);
-int getNumOfRows(struct Matrix *m);
-int getNumOfColumns(struct Matrix *m);
-void printNumOfRows(struct Matrix *m);
-void printNumOfColumns(struct Matrix *m);
-void printFullMatrix(struct Matrix *m);
-void deleteMatrix(struct Matrix *m);
-float determinant(struct Matrix *m);
+Matrix* CreateMatrix(int n, int m);
+void DeleteMatrix(Matrix* m);
