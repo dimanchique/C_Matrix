@@ -23,53 +23,48 @@ typedef struct Matrix {
     int _rows;
     int _columns;
 
-    /** Void Operations: One int param **/
-    VoidOperationOneIntParam TrimMatrixByRow_OverrideOrigin;
-    VoidOperationOneIntParam TrimMatrixByColumn_OverrideOrigin;
+    /** One int param **/
+    MatrixOperationOneIntParam TrimMatrixRow;
+    VoidOperationOneIntParam TrimMatrixRow_OverrideOrigin;
+    MatrixOperationOneIntParam TrimMatrixColumn;
+    VoidOperationOneIntParam TrimMatrixColumn_OverrideOrigin;
 
-    /** Void Operations: Two int params **/
+    /** Two int params **/
+    MatrixOperationTwoIntParams TrimMatrix;
     VoidOperationTwoIntParams TrimMatrix_OverrideOrigin;
+    MatrixOperationTwoIntParams Reshape;
+    VoidOperationTwoIntParams Reshape_OverrideOrigin;
 
-    /** Void Operations: One float param **/
+    /** One float param **/
+    MatrixOperationOneFloatParam AddValue;
     VoidOperationOneFloatParam AddValue_OverrideOrigin;
+    MatrixOperationOneFloatParam SubtractValue;
     VoidOperationOneFloatParam SubtractValue_OverrideOrigin;
+    MatrixOperationOneFloatParam MultiplyByValue;
     VoidOperationOneFloatParam MultiplyByValue_OverrideOrigin;
+    MatrixOperationOneFloatParam DivideByValue;
     VoidOperationOneFloatParam DivideByValue_OverrideOrigin;
 
-    /** Void Operations: No params */
+    /** No params **/
     VoidOperationNoParams PrintFullMatrix;
-
-    /** Int Operations: No params **/
     IntOperationNoParams GetNumOfRows;
     IntOperationNoParams GetNumOfColumns;
-
-    /** Float Operations: No params **/
     FloatOperationNoParams Determinant;
-
-    /** Matrix Operations: No params **/
-    MatrixOperationNoParams T;
     MatrixOperationNoParams Copy;
+    MatrixOperationNoParams Transpose;
+    VoidOperationNoParams Transpose_OverrideOrigin;
     MatrixOperationNoParams Inverse;
+    VoidOperationNoParams Inverse_OverrideOrigin;
 
     /** Matrix Operations: One matrix param **/
     MatrixOperationOneMatrixParam AddMatrix;
+    VoidOperationOneMatrixParam AddMatrix_OverrideOrigin;
     MatrixOperationOneMatrixParam SubtractMatrix;
+    VoidOperationOneMatrixParam SubtractMatrix_OverrideOrigin;
     MatrixOperationOneMatrixParam MultiplyMatrix;
+    VoidOperationOneMatrixParam MultiplyMatrix_OverrideOrigin;
     MatrixOperationOneMatrixParam DivideMatrix;
-
-    /** Matrix Operations: One int param **/
-    MatrixOperationOneIntParam TrimMatrixByRow;
-    MatrixOperationOneIntParam TrimMatrixByColumn;
-
-    /** Matrix Operations: Two int params **/
-    MatrixOperationTwoIntParams TrimMatrix;
-
-    /** Matrix Operations: One float param **/
-    MatrixOperationOneFloatParam AddValue;
-    MatrixOperationOneFloatParam SubtractValue;
-    MatrixOperationOneFloatParam MultiplyByValue;
-    MatrixOperationOneFloatParam DivideByValue;
-
+    VoidOperationOneMatrixParam DivideMatrix_OverrideOrigin;
 } Matrix;
 
 Matrix* CreateMatrix(int rows, int columns);

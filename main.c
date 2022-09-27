@@ -22,7 +22,9 @@ int main() {
     printf("\n");
     Matrix* mm = m->MultiplyMatrix(m, matrix);
     mm->PrintFullMatrix(mm);
-
+    printf("\n");
+    mm->Reshape_OverrideOrigin(mm, 1, 9);
+    mm->PrintFullMatrix(mm);
     DeleteMatrix(mm);
     DeleteMatrix(m);
     DeleteMatrix(matrix);

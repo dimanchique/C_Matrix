@@ -10,52 +10,48 @@
 static float **CreateMatrixData(int rows, int columns);
 static void DeleteMatrixData(Matrix *m);
 
-/** Void Operations: One int param **/
+/** One int param **/
+static Matrix *trimMatrixRow(Matrix *m, int row);
 static void trimMatrixRow_OverrideOrigin(Matrix *m, int row);
+static Matrix *trimMatrixColumn(Matrix *m, int column);
 static void trimMatrixColumn_OverrideOrigin(Matrix *m, int column);
 
-/** Void Operations: Two int params **/
+/** Two int params **/
+static Matrix *trimMatrix(Matrix *m, int row, int column);
 static void trimMatrix_OverrideOrigin(Matrix *m, int row, int column);
+static Matrix *reshape(Matrix *m, int row, int column);
+static void reshape_OverrideOrigin(Matrix *m, int row, int column);
 
-/** Void Operations: One float param **/
+/** One float param **/
+static Matrix *addValue(Matrix *m, float Value);
 static void addValue_OverrideOrigin(Matrix *m, float Value);
+static Matrix *subtractValue(Matrix *m, float Value);
 static void subtractValue_OverrideOrigin(Matrix *m, float Value);
+static Matrix *multiplyByValue(Matrix *m, float Value);
 static void multiplyByValue_OverrideOrigin(Matrix *m, float Value);
+static Matrix *divideByValue(Matrix *m, float Value);
 static void divideByValue_OverrideOrigin(Matrix *m, float Value);
 
-/** Void Operations: No params **/
+/** No params **/
 static void printFullMatrix(Matrix *m);
-
-/** Int Operations: No params **/
 static int getNumOfRows(Matrix *m);
 static int getNumOfColumns(Matrix *m);
-
-/** Float Operations: No params **/
 static float determinant(Matrix *m);
-
-/** Matrix Operations: No params **/
 static Matrix *copy(Matrix *m);
 static Matrix *transpose(Matrix *m);
+static void transpose_OverrideOrigin(Matrix *m);
 static Matrix *inverse(Matrix *m);
+static void inverse_OverrideOrigin(Matrix *m);
 
 /** Matrix Operations: One matrix param **/
 static Matrix *addMatrix(Matrix *m, Matrix *other_m);
+static void addMatrix_OverrideOrigin(Matrix *m, Matrix *other_m);
 static Matrix *subtractMatrix(Matrix *m, Matrix *other_m);
+static void subtractMatrix_OverrideOrigin(Matrix *m, Matrix *other_m);
 static Matrix *multiplyMatrix(Matrix *m, Matrix *other_m);
+static void multiplyMatrix_OverrideOrigin(Matrix *m, Matrix *other_m);
 static Matrix *divideMatrix(Matrix *m, Matrix *other_m);
-
-/** Void Operations: One int param **/
-static Matrix *trimMatrixRow(Matrix *m, int row);
-static Matrix *trimMatrixColumn(Matrix *m, int column);
-
-/** Void Operations: Two int params **/
-static Matrix *trimMatrix(Matrix *m, int row, int column);
-
-/** Void Operations: One float param **/
-static Matrix *addValue(Matrix *m, float Value);
-static Matrix *subtractValue(Matrix *m, float Value);
-static Matrix *multiplyByValue(Matrix *m, float Value);
-static Matrix *divideByValue(Matrix *m, float Value);
+static void divideMatrix_OverrideOrigin(Matrix *m, Matrix *other_m);
 
 
 
@@ -65,52 +61,48 @@ Matrix *CreateMatrix(int rows, int columns) {
     matrix->_rows = rows;
     matrix->_columns = columns;
 
-    /** Void Operations: One int param **/
-    matrix->TrimMatrixByRow_OverrideOrigin = trimMatrixRow_OverrideOrigin;
-    matrix->TrimMatrixByColumn_OverrideOrigin = trimMatrixColumn_OverrideOrigin;
+    /** One int param **/
+    matrix->TrimMatrixRow = trimMatrixRow;
+    matrix->TrimMatrixRow_OverrideOrigin = trimMatrixRow_OverrideOrigin;
+    matrix->TrimMatrixColumn = trimMatrixColumn;
+    matrix->TrimMatrixColumn_OverrideOrigin = trimMatrixColumn_OverrideOrigin;
 
-    /** Void Operations: Two int params **/
+    /** Two int params **/
+    matrix->TrimMatrix = trimMatrix;
     matrix->TrimMatrix_OverrideOrigin = trimMatrix_OverrideOrigin;
+    matrix->Reshape = reshape;
+    matrix->Reshape_OverrideOrigin = reshape_OverrideOrigin;
 
-    /** Void Operations: One float param **/
+    /** One float param **/
+    matrix->AddValue = addValue;
     matrix->AddValue_OverrideOrigin = addValue_OverrideOrigin;
+    matrix->SubtractValue = subtractValue;
     matrix->SubtractValue_OverrideOrigin = subtractValue_OverrideOrigin;
+    matrix->MultiplyByValue = multiplyByValue;
     matrix->MultiplyByValue_OverrideOrigin = multiplyByValue_OverrideOrigin;
+    matrix->DivideByValue = divideByValue;
     matrix->DivideByValue_OverrideOrigin = divideByValue_OverrideOrigin;
 
-    /** Void Operations: No params **/
+    /** No params **/
     matrix->PrintFullMatrix = printFullMatrix;
-
-    /** Int Operations: No params **/
     matrix->GetNumOfRows = getNumOfRows;
     matrix->GetNumOfColumns = getNumOfColumns;
-
-    /** Float Operations: No params **/
     matrix->Determinant = determinant;
-
-    /** Matrix Operations: No params **/
-    matrix->T = transpose;
     matrix->Copy = copy;
+    matrix->Transpose = transpose;
+    matrix->Transpose_OverrideOrigin = transpose_OverrideOrigin;
     matrix->Inverse = inverse;
+    matrix->Inverse_OverrideOrigin = inverse_OverrideOrigin;
 
     /** Matrix Operations: One matrix param **/
     matrix->AddMatrix = addMatrix;
+    matrix->AddMatrix_OverrideOrigin = addMatrix_OverrideOrigin;
     matrix->SubtractMatrix = subtractMatrix;
+    matrix->SubtractMatrix_OverrideOrigin = subtractMatrix_OverrideOrigin;
     matrix->MultiplyMatrix = multiplyMatrix;
+    matrix->MultiplyMatrix_OverrideOrigin = multiplyMatrix_OverrideOrigin;
     matrix->DivideMatrix = divideMatrix;
-
-    /** Void Operations: One int param **/
-    matrix->TrimMatrixByRow = trimMatrixRow;
-    matrix->TrimMatrixByColumn = trimMatrixColumn;
-
-    /** Void Operations: Two int params **/
-    matrix->TrimMatrix = trimMatrix;
-
-    /** Void Operations: One float param **/
-    matrix->AddValue = addValue;
-    matrix->SubtractValue = subtractValue;
-    matrix->MultiplyByValue = multiplyByValue;
-    matrix->DivideByValue = divideByValue;
+    matrix->DivideMatrix_OverrideOrigin = divideMatrix_OverrideOrigin;
 
 
 
@@ -127,6 +119,15 @@ Matrix *CreateMatrix(int rows, int columns) {
     printf("Error while creating Matrix");
     #endif
     return NULL;
+}
+
+void DeleteMatrix(Matrix *m) {
+    assert(m != NULL);
+    DeleteMatrixData(m);
+    free(m);
+#ifdef DEBUG
+    printf("Deleting Matrix with address: 0x%x\n", m);
+#endif
 }
 
 static float **CreateMatrixData(int rows, int columns) {
@@ -156,47 +157,163 @@ static float **CreateMatrixData(int rows, int columns) {
     return matrix_data;
 }
 
-Matrix *copy(Matrix *m) {
-    assert(m != NULL);
-    Matrix *new_m = CreateMatrix(m->_rows, m->_columns);
-    if (new_m == NULL)
-        return NULL;
-    for (int i = 0; i < m->_rows; i++)
-        memcpy(new_m->_matrix[i], m->_matrix[i], m->_columns * sizeof(float));
-    return new_m;
-}
-
-Matrix *transpose(Matrix *m) {
-    assert(m != NULL);
-    Matrix *new_m = CreateMatrix(m->_columns, m->_rows);
-    if (new_m == NULL)
-        return NULL;
-
-    for (int i = 0; i < m->_rows; i++)
-        for (int j = 0; j < m->_columns; j++)
-            new_m->_matrix[j][i] = m->_matrix[i][j];
-    return new_m;
-}
-
-void DeleteMatrix(Matrix *m) {
-    assert(m != NULL);
-    DeleteMatrixData(m);
-    free(m);
-    #ifdef DEBUG
-    printf("Deleting Matrix with address: 0x%x\n", m);
-    #endif
-}
-
 static void DeleteMatrixData(Matrix *m) {
     assert(m != NULL);
-    #ifdef DEBUG
+#ifdef DEBUG
     printf("Deleting Matrix data with address: 0x%x\n", m);
-    #endif
+#endif
     for (int i = 0; i < m->_rows; i++)
         free(m->_matrix[i]);
 }
 
-void printFullMatrix(Matrix *m) {
+static Matrix *trimMatrixRow(Matrix *m, int row) {
+    Matrix *temp = m->Copy(m);
+    trimMatrixRow_OverrideOrigin(temp, row);
+    return temp;
+}
+
+static void trimMatrixRow_OverrideOrigin(Matrix *m, int row) {
+    assert(m != NULL);
+    Matrix *temp = copy(m);
+    if (!temp) return;
+    DeleteMatrixData(m);
+    m->_rows--;
+    m->_matrix = CreateMatrixData(m->_rows, m->_columns);
+    if (m->_matrix == NULL) return;
+
+    int CurrentRow = 0;
+    for (int i = 0; i < temp->_rows; i++) {
+        if (i == row) continue;
+        for (int j = 0; j < temp->_columns; j++)
+            m->_matrix[CurrentRow][j] = temp->_matrix[i][j];
+        CurrentRow++;
+    }
+    DeleteMatrix(temp);
+}
+
+static Matrix *trimMatrixColumn(Matrix *m, int column) {
+    Matrix *temp = m->Copy(m);
+    trimMatrixColumn_OverrideOrigin(temp, column);
+    return temp;
+}
+
+static void trimMatrixColumn_OverrideOrigin(Matrix *m, int column) {
+    assert(m != NULL);
+    Matrix *temp = copy(m);
+    if (!temp) return;
+    DeleteMatrixData(m);
+    m->_columns--;
+    m->_matrix = CreateMatrixData(m->_rows, m->_columns);
+    if (m->_matrix == NULL) return;
+
+    for (int i = 0; i < temp->_rows; i++) {
+        int CurrentColumn = 0;
+        for (int j = 0; j < temp->_columns; j++) {
+            if (j == column) continue;
+            m->_matrix[i][CurrentColumn] = temp->_matrix[i][j];
+            CurrentColumn++;
+        }
+    }
+    DeleteMatrix(temp);
+}
+
+static Matrix *trimMatrix(Matrix *m, int row, int column) {
+    Matrix *temp = m->Copy(m);
+    trimMatrix_OverrideOrigin(temp, row, column);
+    return temp;
+}
+
+static void trimMatrix_OverrideOrigin(Matrix *m, int row, int column) {
+    trimMatrixRow_OverrideOrigin(m, row);
+    trimMatrixColumn_OverrideOrigin(m, column);
+}
+
+static Matrix *reshape(Matrix *m, int row, int column) {
+    Matrix *temp = copy(m);
+    if (!temp) return NULL;
+    reshape_OverrideOrigin(temp, row, column);
+    return temp;
+}
+
+static void reshape_OverrideOrigin(Matrix *m, int row, int column) {
+    assert(m != NULL);
+    assert(row*column == m->_rows * m->_columns);
+    DeleteMatrixData(m);
+    Matrix *temp = copy(m);
+    if (!temp) return;
+    float **matrix = CreateMatrixData(row, column);
+    if (!matrix) return;
+    int CurrentRow = 0;
+    int CurrentColumn = 0;
+    for (int i = 0; i < temp->_rows; i++) {
+        for (int j = 0; j < temp->_columns; j++) {
+            matrix[CurrentRow][CurrentColumn] = temp->_matrix[i][j];
+            CurrentColumn++;
+            if (CurrentColumn == column)
+            {
+                CurrentColumn = 0;
+                CurrentRow++;
+            }
+        }
+    }
+
+    m->_matrix = matrix;
+    m->_rows = row;
+    m->_columns = column;
+    DeleteMatrix(temp);
+}
+
+static Matrix *addValue(Matrix *m, float Value) {
+    Matrix *temp = m->Copy(m);
+    addValue_OverrideOrigin(temp, Value);
+    return temp;
+}
+
+static void addValue_OverrideOrigin(Matrix *m, float Value) {
+    assert(m != NULL);
+    for (int i = 0; i < m->_rows; i++)
+        for (int j = 0; j < m->_columns; j++)
+            m->_matrix[i][j] += Value;
+}
+
+static Matrix *subtractValue(Matrix *m, float Value) {
+    Matrix *temp = m->Copy(m);
+    subtractValue_OverrideOrigin(temp, Value);
+    return temp;
+}
+
+static void subtractValue_OverrideOrigin(Matrix *m, float Value) {
+    addValue_OverrideOrigin(m, -Value);
+}
+
+static Matrix *multiplyByValue(Matrix *m, float Value) {
+    Matrix *temp = m->Copy(m);
+    multiplyByValue_OverrideOrigin(temp, Value);
+    return temp;
+}
+
+static void multiplyByValue_OverrideOrigin(Matrix *m, float Value) {
+    assert(m != NULL);
+    for (int i = 0; i < m->_rows; i++)
+        for (int j = 0; j < m->_columns; j++)
+            m->_matrix[i][j] *= Value;
+}
+
+static Matrix *divideByValue(Matrix *m, float Value) {
+    Matrix *temp = m->Copy(m);
+    divideByValue_OverrideOrigin(temp, Value);
+    return temp;
+}
+
+static void divideByValue_OverrideOrigin(Matrix *m, float Value) {
+    assert(m != NULL);
+    assert(Value != 0.0f);
+    for (int i = 0; i < m->_rows; i++)
+        for (int j = 0; j < m->_columns; j++)
+            m->_matrix[i][j] /= Value;
+}
+
+static void printFullMatrix(Matrix *m) {
     assert(m != NULL);
     for (int i = 0; i < m->_rows; i++) {
         for (int j = 0; j < m->_columns; j++)
@@ -205,17 +322,17 @@ void printFullMatrix(Matrix *m) {
     }
 }
 
-int getNumOfRows(Matrix *m) {
+static int getNumOfRows(Matrix *m) {
     assert(m != NULL);
     return m->_rows;
 }
 
-int getNumOfColumns(Matrix *m) {
+static int getNumOfColumns(Matrix *m) {
     assert(m != NULL);
     return m->_columns;
 }
 
-float determinant(Matrix *m) {
+static float determinant(Matrix *m) {
     assert(m != NULL);
     assert(m->_rows == m->_columns);
 
@@ -236,165 +353,46 @@ float determinant(Matrix *m) {
     return det;
 }
 
-void addValue_OverrideOrigin(Matrix *m, float Value) {
+static Matrix *copy(Matrix *m) {
     assert(m != NULL);
+    Matrix *new_m = CreateMatrix(m->_rows, m->_columns);
+    if (new_m == NULL)
+        return NULL;
     for (int i = 0; i < m->_rows; i++)
-        for (int j = 0; j < m->_columns; j++)
-            m->_matrix[i][j] += Value;
+        memcpy(new_m->_matrix[i], m->_matrix[i], m->_columns * sizeof(float));
+    return new_m;
 }
 
-Matrix *addValue(Matrix *m, float Value) {
-    Matrix *temp = m->Copy(m);
-    addValue_OverrideOrigin(temp, Value);
-    return temp;
-}
-
-void subtractValue_OverrideOrigin(Matrix *m, float Value) {
-    addValue_OverrideOrigin(m, -Value);
-}
-
-Matrix *subtractValue(Matrix *m, float Value) {
-    Matrix *temp = m->Copy(m);
-    subtractValue_OverrideOrigin(temp, Value);
-    return temp;
-}
-
-void multiplyByValue_OverrideOrigin(Matrix *m, float Value) {
+static Matrix *transpose(Matrix *m) {
     assert(m != NULL);
-    for (int i = 0; i < m->_rows; i++)
-        for (int j = 0; j < m->_columns; j++)
-            m->_matrix[i][j] *= Value;
-}
-
-Matrix *multiplyByValue(Matrix *m, float Value) {
-    Matrix *temp = m->Copy(m);
-    multiplyByValue_OverrideOrigin(temp, Value);
-    return temp;
-}
-
-void divideByValue_OverrideOrigin(Matrix *m, float Value) {
-    assert(m != NULL);
-    assert(Value != 0.0f);
-    for (int i = 0; i < m->_rows; i++)
-        for (int j = 0; j < m->_columns; j++)
-            m->_matrix[i][j] /= Value;
-}
-
-Matrix *divideByValue(Matrix *m, float Value) {
-    Matrix *temp = m->Copy(m);
-    divideByValue_OverrideOrigin(temp, Value);
-    return temp;
-}
-
-Matrix *addMatrix(Matrix *m, Matrix *other_m) {
-    assert(m != NULL);
-    assert(other_m != NULL);
-    assert(m->_rows == other_m->_rows && m->_columns == other_m->_columns);
-
-    Matrix *result = m->Copy(m);
-    for (int i = 0; i < m->_rows; i++)
-        for (int j = 0; j < m->_columns; j++)
-            result->_matrix[i][j] += other_m->_matrix[i][j];
-
-    return result;
-}
-
-Matrix *subtractMatrix(Matrix *m, Matrix *other_m) {
-    assert(m != NULL);
-    assert(other_m != NULL);
-    assert(m->_rows == other_m->_rows && m->_columns == other_m->_columns);
-
-    Matrix *result = m->Copy(m);
-    for (int i = 0; i < m->_rows; i++)
-        for (int j = 0; j < m->_columns; j++)
-            result->_matrix[i][j] -= other_m->_matrix[i][j];
-
-    return result;
-}
-
-Matrix *multiplyMatrix(Matrix *m, Matrix *other_m) {
-    assert(m != NULL);
-    assert(other_m != NULL);
-    assert(m->_columns == other_m->_rows);
-
-    Matrix *result = CreateMatrix(m->_rows, other_m->_columns);
-
-    for (int i = 0; i < m->_rows; i++) {
-        for (int j = 0; j < other_m->_columns; j++) {
-            result->_matrix[i][j] = 0;
-            for (int k = 0; k < m->_columns; k++)
-                result->_matrix[i][j] += m->_matrix[i][k] * other_m->_matrix[k][j];
-        }
-    }
-    return result;
-}
-
-Matrix *divideMatrix(Matrix *m, Matrix *other_m) {
-    Matrix *temp = inverse(other_m);
-    Matrix *result = multiplyMatrix(m, temp);
-    DeleteMatrix(temp);
-    return result;
-}
-
-static void trimMatrixRow_OverrideOrigin(Matrix *m, int row) {
     Matrix *temp = copy(m);
+    transpose_OverrideOrigin(temp);
+    return temp;
+}
+
+static void transpose_OverrideOrigin(Matrix *m) {
+    assert(m != NULL);
+    float **new_m = CreateMatrixData(m->_columns, m->_rows);
+    if (new_m == NULL) return;
+
+    for (int i = 0; i < m->_rows; i++)
+        for (int j = 0; j < m->_columns; j++)
+            new_m[j][i] = m->_matrix[i][j];
     DeleteMatrixData(m);
-    m->_rows--;
-    m->_matrix = CreateMatrixData(m->_rows, m->_columns);
-    if (m->_matrix == NULL) return;
-
-    int CurrentRow = 0;
-    for (int i = 0; i < temp->_rows; i++) {
-        if (i == row) continue;
-        for (int j = 0; j < temp->_columns; j++)
-            m->_matrix[CurrentRow][j] = temp->_matrix[i][j];
-        CurrentRow++;
-    }
-    DeleteMatrix(temp);
-}
-
-Matrix *trimMatrixRow(Matrix *m, int row) {
-    Matrix *temp = m->Copy(m);
-    trimMatrixRow_OverrideOrigin(temp, row);
-    return temp;
-}
-
-static void trimMatrixColumn_OverrideOrigin(Matrix *m, int column) {
-    Matrix *temp = copy(m);
-    DeleteMatrixData(m);
-    m->_columns--;
-    m->_matrix = CreateMatrixData(m->_rows, m->_columns);
-    if (m->_matrix == NULL) return;
-
-    for (int i = 0; i < temp->_rows; i++) {
-        int CurrentColumn = 0;
-        for (int j = 0; j < temp->_columns; j++) {
-            if (j == column) continue;
-            m->_matrix[i][CurrentColumn] = temp->_matrix[i][j];
-            CurrentColumn++;
-        }
-    }
-    DeleteMatrix(temp);
-}
-
-Matrix *trimMatrixColumn(Matrix *m, int column) {
-    Matrix *temp = m->Copy(m);
-    trimMatrixColumn_OverrideOrigin(temp, column);
-    return temp;
-}
-
-static void trimMatrix_OverrideOrigin(Matrix *m, int row, int column) {
-    trimMatrixRow_OverrideOrigin(m, row);
-    trimMatrixColumn_OverrideOrigin(m, column);
-}
-
-Matrix *trimMatrix(Matrix *m, int row, int column) {
-    Matrix *temp = m->Copy(m);
-    trimMatrix_OverrideOrigin(temp, row, column);
-    return temp;
+    m->_matrix = new_m;
+    int temp = m->_rows;
+    m->_rows = m->_columns;
+    m->_columns = temp;
 }
 
 static Matrix *inverse(Matrix *m) {
+    Matrix *temp = copy(m);
+    inverse_OverrideOrigin(temp);
+    return temp;
+}
+
+static void inverse_OverrideOrigin(Matrix *m) {
+    assert(m != NULL);
     float det = determinant(m);
 
     if (fabsf(det) < 0.00005f) //epsilon
@@ -402,7 +400,7 @@ static Matrix *inverse(Matrix *m) {
         #ifdef DEBUG
         printf("Matrix with D = 0 can't be inversed");
         #endif
-        return NULL;
+        return;
     }
 
     Matrix *minor_m = m->Copy(m);
@@ -421,11 +419,84 @@ static Matrix *inverse(Matrix *m) {
             sign *= -1;
         }
 
-    Matrix *matrix = minor_m->T(minor_m);
-    matrix->DivideByValue_OverrideOrigin(matrix, det);
+    transpose_OverrideOrigin(minor_m);
+    divideByValue_OverrideOrigin(minor_m, det);
+
+    for (int i = 0; i < m->_rows; i++)
+        memcpy(m->_matrix[i], minor_m->_matrix[i], minor_m->_columns * sizeof(float));
 
     DeleteMatrix(minor_m);
     DeleteMatrix(temp);
+}
 
-    return matrix;
+static Matrix *addMatrix(Matrix *m, Matrix *other_m) {
+    Matrix *result = m->Copy(m);
+    addMatrix_OverrideOrigin(result, other_m);
+    return result;
+}
+
+static void addMatrix_OverrideOrigin(Matrix *m, Matrix *other_m) {
+    assert(m != NULL);
+    assert(other_m != NULL);
+    assert(m->_rows == other_m->_rows && m->_columns == other_m->_columns);
+
+    for (int i = 0; i < m->_rows; i++)
+        for (int j = 0; j < m->_columns; j++)
+            m->_matrix[i][j] += other_m->_matrix[i][j];
+}
+
+static Matrix *subtractMatrix(Matrix *m, Matrix *other_m) {
+    Matrix *result = m->Copy(m);
+    subtractMatrix_OverrideOrigin(result, other_m);
+    return result;
+}
+
+static void subtractMatrix_OverrideOrigin(Matrix *m, Matrix *other_m) {
+    assert(m != NULL);
+    assert(other_m != NULL);
+    assert(m->_rows == other_m->_rows && m->_columns == other_m->_columns);
+
+    for (int i = 0; i < m->_rows; i++)
+        for (int j = 0; j < m->_columns; j++)
+            m->_matrix[i][j] -= other_m->_matrix[i][j];
+}
+
+static Matrix *multiplyMatrix(Matrix *m, Matrix *other_m) {
+    Matrix *result = copy(m);
+    multiplyMatrix_OverrideOrigin(result, other_m);
+    return result;
+}
+
+static void multiplyMatrix_OverrideOrigin(Matrix *m, Matrix *other_m) {
+    assert(m != NULL);
+    assert(other_m != NULL);
+    assert(m->_columns == other_m->_rows);
+
+    float **matrix = CreateMatrixData(m->_rows, other_m->_columns);
+    if (!matrix) return;
+
+    for (int i = 0; i < m->_rows; i++) {
+        for (int j = 0; j < other_m->_columns; j++) {
+            matrix[i][j] = 0;
+            for (int k = 0; k < m->_columns; k++)
+                matrix[i][j] += m->_matrix[i][k] * other_m->_matrix[k][j];
+        }
+    }
+    DeleteMatrixData(m);
+    m->_columns = other_m->_columns;
+    m->_matrix = matrix;
+}
+
+static Matrix *divideMatrix(Matrix *m, Matrix *other_m) {
+    Matrix *result = copy(m);
+    divideMatrix_OverrideOrigin(result, other_m);
+    return result;
+}
+
+static void divideMatrix_OverrideOrigin(Matrix *m, Matrix *other_m) {
+    assert(m != NULL);
+    assert(other_m != NULL);
+    Matrix *temp = inverse(other_m);
+    multiplyMatrix_OverrideOrigin(m, temp);
+    DeleteMatrix(temp);
 }
