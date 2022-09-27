@@ -11,17 +11,17 @@ static float **CreateMatrixData(int rows, int columns);
 static void DeleteMatrixData(Matrix *m);
 
 /** Void Operations: One int param **/
-static void trimMatrixRow_NoRet(Matrix *m, int row);
-static void trimMatrixColumn_NoRet(Matrix *m, int column);
+static void trimMatrixRow_OverrideOrigin(Matrix *m, int row);
+static void trimMatrixColumn_OverrideOrigin(Matrix *m, int column);
 
 /** Void Operations: Two int params **/
-static void trimMatrix_NoRet(Matrix *m, int row, int column);
+static void trimMatrix_OverrideOrigin(Matrix *m, int row, int column);
 
 /** Void Operations: One float param **/
-static void addValue_NoRet(Matrix *m, float Value);
-static void subtractValue_NoRet(Matrix *m, float Value);
-static void multiplyByValue_NoRet(Matrix *m, float Value);
-static void divideByValue_NoRet(Matrix *m, float Value);
+static void addValue_OverrideOrigin(Matrix *m, float Value);
+static void subtractValue_OverrideOrigin(Matrix *m, float Value);
+static void multiplyByValue_OverrideOrigin(Matrix *m, float Value);
+static void divideByValue_OverrideOrigin(Matrix *m, float Value);
 
 /** Void Operations: No params **/
 static void printFullMatrix(Matrix *m);
@@ -66,17 +66,17 @@ Matrix *CreateMatrix(int rows, int columns) {
     matrix->_columns = columns;
 
     /** Void Operations: One int param **/
-    matrix->TrimMatrixByRow_NoRet = trimMatrixRow_NoRet;
-    matrix->TrimMatrixByColumn_NoRet = trimMatrixColumn_NoRet;
+    matrix->TrimMatrixByRow_OverrideOrigin = trimMatrixRow_OverrideOrigin;
+    matrix->TrimMatrixByColumn_OverrideOrigin = trimMatrixColumn_OverrideOrigin;
 
     /** Void Operations: Two int params **/
-    matrix->TrimMatrix_NoRet = trimMatrix_NoRet;
+    matrix->TrimMatrix_OverrideOrigin = trimMatrix_OverrideOrigin;
 
     /** Void Operations: One float param **/
-    matrix->AddValue_NoRet = addValue_NoRet;
-    matrix->SubtractValue_NoRet = subtractValue_NoRet;
-    matrix->MultiplyByValue_NoRet = multiplyByValue_NoRet;
-    matrix->DivideByValue_NoRet = divideByValue_NoRet;
+    matrix->AddValue_OverrideOrigin = addValue_OverrideOrigin;
+    matrix->SubtractValue_OverrideOrigin = subtractValue_OverrideOrigin;
+    matrix->MultiplyByValue_OverrideOrigin = multiplyByValue_OverrideOrigin;
+    matrix->DivideByValue_OverrideOrigin = divideByValue_OverrideOrigin;
 
     /** Void Operations: No params **/
     matrix->PrintFullMatrix = printFullMatrix;
@@ -189,9 +189,9 @@ void DeleteMatrix(Matrix *m) {
 
 static void DeleteMatrixData(Matrix *m) {
     assert(m != NULL);
-#ifdef DEBUG
+    #ifdef DEBUG
     printf("Deleting Matrix data with address: 0x%x\n", m);
-#endif
+    #endif
     for (int i = 0; i < m->_rows; i++)
         free(m->_matrix[i]);
 }
@@ -236,7 +236,7 @@ float determinant(Matrix *m) {
     return det;
 }
 
-void addValue_NoRet(Matrix *m, float Value) {
+void addValue_OverrideOrigin(Matrix *m, float Value) {
     assert(m != NULL);
     for (int i = 0; i < m->_rows; i++)
         for (int j = 0; j < m->_columns; j++)
@@ -245,21 +245,21 @@ void addValue_NoRet(Matrix *m, float Value) {
 
 Matrix *addValue(Matrix *m, float Value) {
     Matrix *temp = m->Copy(m);
-    addValue_NoRet(temp, Value);
+    addValue_OverrideOrigin(temp, Value);
     return temp;
 }
 
-void subtractValue_NoRet(Matrix *m, float Value) {
-    addValue_NoRet(m, -Value);
+void subtractValue_OverrideOrigin(Matrix *m, float Value) {
+    addValue_OverrideOrigin(m, -Value);
 }
 
 Matrix *subtractValue(Matrix *m, float Value) {
     Matrix *temp = m->Copy(m);
-    subtractValue_NoRet(temp, Value);
+    subtractValue_OverrideOrigin(temp, Value);
     return temp;
 }
 
-void multiplyByValue_NoRet(Matrix *m, float Value) {
+void multiplyByValue_OverrideOrigin(Matrix *m, float Value) {
     assert(m != NULL);
     for (int i = 0; i < m->_rows; i++)
         for (int j = 0; j < m->_columns; j++)
@@ -268,11 +268,11 @@ void multiplyByValue_NoRet(Matrix *m, float Value) {
 
 Matrix *multiplyByValue(Matrix *m, float Value) {
     Matrix *temp = m->Copy(m);
-    multiplyByValue_NoRet(temp, Value);
+    multiplyByValue_OverrideOrigin(temp, Value);
     return temp;
 }
 
-void divideByValue_NoRet(Matrix *m, float Value) {
+void divideByValue_OverrideOrigin(Matrix *m, float Value) {
     assert(m != NULL);
     assert(Value != 0.0f);
     for (int i = 0; i < m->_rows; i++)
@@ -282,7 +282,7 @@ void divideByValue_NoRet(Matrix *m, float Value) {
 
 Matrix *divideByValue(Matrix *m, float Value) {
     Matrix *temp = m->Copy(m);
-    divideByValue_NoRet(temp, Value);
+    divideByValue_OverrideOrigin(temp, Value);
     return temp;
 }
 
@@ -326,7 +326,6 @@ Matrix *multiplyMatrix(Matrix *m, Matrix *other_m) {
                 result->_matrix[i][j] += m->_matrix[i][k] * other_m->_matrix[k][j];
         }
     }
-
     return result;
 }
 
@@ -337,7 +336,7 @@ Matrix *divideMatrix(Matrix *m, Matrix *other_m) {
     return result;
 }
 
-static void trimMatrixRow_NoRet(Matrix *m, int row) {
+static void trimMatrixRow_OverrideOrigin(Matrix *m, int row) {
     Matrix *temp = copy(m);
     DeleteMatrixData(m);
     m->_rows--;
@@ -356,11 +355,11 @@ static void trimMatrixRow_NoRet(Matrix *m, int row) {
 
 Matrix *trimMatrixRow(Matrix *m, int row) {
     Matrix *temp = m->Copy(m);
-    trimMatrixRow_NoRet(temp, row);
+    trimMatrixRow_OverrideOrigin(temp, row);
     return temp;
 }
 
-static void trimMatrixColumn_NoRet(Matrix *m, int column) {
+static void trimMatrixColumn_OverrideOrigin(Matrix *m, int column) {
     Matrix *temp = copy(m);
     DeleteMatrixData(m);
     m->_columns--;
@@ -380,18 +379,18 @@ static void trimMatrixColumn_NoRet(Matrix *m, int column) {
 
 Matrix *trimMatrixColumn(Matrix *m, int column) {
     Matrix *temp = m->Copy(m);
-    trimMatrixColumn_NoRet(temp, column);
+    trimMatrixColumn_OverrideOrigin(temp, column);
     return temp;
 }
 
-static void trimMatrix_NoRet(Matrix *m, int row, int column) {
-    trimMatrixRow_NoRet(m, row);
-    trimMatrixColumn_NoRet(m, column);
+static void trimMatrix_OverrideOrigin(Matrix *m, int row, int column) {
+    trimMatrixRow_OverrideOrigin(m, row);
+    trimMatrixColumn_OverrideOrigin(m, column);
 }
 
 Matrix *trimMatrix(Matrix *m, int row, int column) {
     Matrix *temp = m->Copy(m);
-    trimMatrix_NoRet(temp, row, column);
+    trimMatrix_OverrideOrigin(temp, row, column);
     return temp;
 }
 
@@ -423,7 +422,7 @@ static Matrix *inverse(Matrix *m) {
         }
 
     Matrix *matrix = minor_m->T(minor_m);
-    matrix->DivideByValue_NoRet(matrix, det);
+    matrix->DivideByValue_OverrideOrigin(matrix, det);
 
     DeleteMatrix(minor_m);
     DeleteMatrix(temp);

@@ -1,5 +1,4 @@
 #pragma once
-
 struct Matrix;
 
 /** No Return Functions **/
@@ -25,19 +24,19 @@ typedef struct Matrix {
     int _columns;
 
     /** Void Operations: One int param **/
-    VoidOperationOneIntParam TrimMatrixByRow_NoRet;
-    VoidOperationOneIntParam TrimMatrixByColumn_NoRet;
+    VoidOperationOneIntParam TrimMatrixByRow_OverrideOrigin;
+    VoidOperationOneIntParam TrimMatrixByColumn_OverrideOrigin;
 
     /** Void Operations: Two int params **/
-    VoidOperationTwoIntParams TrimMatrix_NoRet;
+    VoidOperationTwoIntParams TrimMatrix_OverrideOrigin;
 
     /** Void Operations: One float param **/
-    VoidOperationOneFloatParam AddValue_NoRet;
-    VoidOperationOneFloatParam SubtractValue_NoRet;
-    VoidOperationOneFloatParam MultiplyByValue_NoRet;
-    VoidOperationOneFloatParam DivideByValue_NoRet;
+    VoidOperationOneFloatParam AddValue_OverrideOrigin;
+    VoidOperationOneFloatParam SubtractValue_OverrideOrigin;
+    VoidOperationOneFloatParam MultiplyByValue_OverrideOrigin;
+    VoidOperationOneFloatParam DivideByValue_OverrideOrigin;
 
-    /** Void Operations: No params **/
+    /** Void Operations: No params */
     VoidOperationNoParams PrintFullMatrix;
 
     /** Int Operations: No params **/
@@ -58,14 +57,14 @@ typedef struct Matrix {
     MatrixOperationOneMatrixParam MultiplyMatrix;
     MatrixOperationOneMatrixParam DivideMatrix;
 
-    /** Void Operations: One int param **/
+    /** Matrix Operations: One int param **/
     MatrixOperationOneIntParam TrimMatrixByRow;
     MatrixOperationOneIntParam TrimMatrixByColumn;
 
-    /** Void Operations: Two int params **/
+    /** Matrix Operations: Two int params **/
     MatrixOperationTwoIntParams TrimMatrix;
 
-    /** Void Operations: One float param **/
+    /** Matrix Operations: One float param **/
     MatrixOperationOneFloatParam AddValue;
     MatrixOperationOneFloatParam SubtractValue;
     MatrixOperationOneFloatParam MultiplyByValue;
