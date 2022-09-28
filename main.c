@@ -16,7 +16,8 @@ int main() {
     m->PrintFullMatrix(m);
     printf("\n");
 
-    Matrix* matrix = m->Inverse(m);
+    Matrix* matrix = m->Copy(m);
+    matrix->Inverse_OverrideOrigin(matrix);
     matrix->PrintFullMatrix(matrix);
 
     printf("\n");
