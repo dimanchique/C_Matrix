@@ -16,18 +16,11 @@ int main() {
     m->PrintFullMatrix(m);
     printf("\n");
 
-    Matrix* matrix = m->Copy(m);
-    matrix->Inverse_OverrideOrigin(matrix);
-    matrix->PrintFullMatrix(matrix);
+    float a[] = {1.0f, 1.0f, 1.0f};
+    m->ReplaceColumn_OverrideOrigin(m, 1, a);
+    m->PrintFullMatrix(m);
+    printf("\n");
 
-    printf("\n");
-    Matrix* mm = m->MultiplyMatrix(m, matrix);
-    mm->PrintFullMatrix(mm);
-    printf("\n");
-    mm->Reshape_OverrideOrigin(mm, 1, 9);
-    mm->PrintFullMatrix(mm);
-    DeleteMatrix(mm);
     DeleteMatrix(m);
-    DeleteMatrix(matrix);
     return 0;
 }

@@ -6,12 +6,14 @@ typedef void (*VoidOperationNoParams)(struct Matrix*);
 typedef void (*VoidOperationOneMatrixParam)(struct Matrix*, struct Matrix*);
 typedef void (*VoidOperationOneFloatParam)(struct Matrix*, float);
 typedef void (*VoidOperationOneIntParam)(struct Matrix*, int);
+typedef void (*VoidOperationOneIntParamOneArrayParam)(struct Matrix*, int, const float*);
 typedef void (*VoidOperationTwoIntParams)(struct Matrix*, int, int);
 /** Return Matrix Functions **/
 typedef struct Matrix* (*MatrixOperationNoParams)(struct Matrix*);
 typedef struct Matrix* (*MatrixOperationOneMatrixParam)(struct Matrix*, struct Matrix*);
 typedef struct Matrix* (*MatrixOperationOneFloatParam)(struct Matrix*, float);
 typedef struct Matrix* (*MatrixOperationOneIntParam)(struct Matrix*, int);
+typedef struct Matrix* (*MatrixOperationOneIntParamOneArrayParam)(struct Matrix*, int, float*);
 typedef struct Matrix* (*MatrixOperationTwoIntParams)(struct Matrix*, int, int);
 /** Return Int/Float Functions **/
 typedef float (*FloatOperationNoParams)(struct Matrix*);
@@ -28,6 +30,12 @@ typedef struct Matrix {
     VoidOperationOneIntParam TrimMatrixRow_OverrideOrigin;
     MatrixOperationOneIntParam TrimMatrixColumn;
     VoidOperationOneIntParam TrimMatrixColumn_OverrideOrigin;
+
+    /** One int param, one float array **/
+    MatrixOperationOneIntParamOneArrayParam ReplaceRow;
+    VoidOperationOneIntParamOneArrayParam ReplaceRow_OverrideOrigin;
+    MatrixOperationOneIntParamOneArrayParam ReplaceColumn;
+    VoidOperationOneIntParamOneArrayParam ReplaceColumn_OverrideOrigin;
 
     /** Two int params **/
     MatrixOperationTwoIntParams TrimMatrix;

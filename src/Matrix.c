@@ -16,6 +16,12 @@ static void trimMatrixRow_OverrideOrigin(Matrix *m, int row);
 static Matrix *trimMatrixColumn(Matrix *m, int column);
 static void trimMatrixColumn_OverrideOrigin(Matrix *m, int column);
 
+/** One int param, one float array **/
+static Matrix *replaceRow(struct Matrix *m, int row, float* new_row);
+static void replaceRow_OverrideOrigin(struct Matrix *m, int row, const float* new_row);
+static Matrix *replaceColumn(struct Matrix *m, int column, float* new_column);
+static void replaceColumn_OverrideOrigin(struct Matrix *m, int column, const float* new_column);
+
 /** Two int params **/
 static Matrix *trimMatrix(Matrix *m, int row, int column);
 static void trimMatrix_OverrideOrigin(Matrix *m, int row, int column);
@@ -66,6 +72,12 @@ Matrix *CreateMatrix(int rows, int columns) {
     matrix->TrimMatrixRow_OverrideOrigin = trimMatrixRow_OverrideOrigin;
     matrix->TrimMatrixColumn = trimMatrixColumn;
     matrix->TrimMatrixColumn_OverrideOrigin = trimMatrixColumn_OverrideOrigin;
+
+    /** One int param, one float array **/
+    matrix->ReplaceRow = replaceRow;
+    matrix->ReplaceRow_OverrideOrigin = replaceRow_OverrideOrigin;
+    matrix->ReplaceColumn = replaceColumn;
+    matrix->ReplaceColumn_OverrideOrigin = replaceColumn_OverrideOrigin;
 
     /** Two int params **/
     matrix->TrimMatrix = trimMatrix;
@@ -499,4 +511,30 @@ static void divideMatrix_OverrideOrigin(Matrix *m, Matrix *other_m) {
     Matrix *temp = inverse(other_m);
     multiplyMatrix_OverrideOrigin(m, temp);
     DeleteMatrix(temp);
+}
+
+static Matrix *replaceRow(struct Matrix *m, int row, float* new_row) {
+    Matrix *result = copy(m);
+    replaceRow_OverrideOrigin(result, row, new_row);
+    return result;
+}
+
+static void replaceRow_OverrideOrigin(struct Matrix *m, int row, const float* new_row) {
+    for (int i = 0; i < m->_rows; i++)
+        for (int j = 0; j < m->_columns; j++)
+            if (i == row)
+                m->_matrix[i][j] = new_row[i];
+}
+
+static Matrix *replaceColumn(struct Matrix *m, int column, float* new_column) {
+    Matrix *result = copy(m);
+    replaceColumn_OverrideOrigin(result, column, new_column);
+    return result;
+}
+
+static void replaceColumn_OverrideOrigin(struct Matrix *m, int column, const float* new_column) {
+    for (int i = 0; i < m->_rows; i++)
+        for (int j = 0; j < m->_columns; j++)
+            if (j == column)
+                m->_matrix[i][j] = new_column[i];
 }
