@@ -13,12 +13,13 @@ int main() {
     m->_matrix[2][1] = -2;
     m->_matrix[2][2] = -3;
 
-    m->PrintFullMatrix(m);
+    PrintFullMatrix(m);
     printf("\n");
 
     float a[] = {1.0f, 1.0f, 1.0f};
-    m->ReplaceColumn_OverrideOrigin(m, 1, a);
-    m->PrintFullMatrix(m);
+    ReplaceColumn_OverrideOrigin(m, 1, a);
+    ReplaceRow_OverrideOrigin(m, 1, a);
+    PrintFullMatrix(m);
     printf("\n");
 
     DeleteMatrix(m);

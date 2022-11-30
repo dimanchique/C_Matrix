@@ -1,79 +1,62 @@
 #pragma once
 struct Matrix;
 
-/** No Return Functions **/
-typedef void (*VoidOperationNoParams)(struct Matrix*);
-typedef void (*VoidOperationOneMatrixParam)(struct Matrix*, struct Matrix*);
-typedef void (*VoidOperationOneFloatParam)(struct Matrix*, float);
-typedef void (*VoidOperationOneIntParam)(struct Matrix*, int);
-typedef void (*VoidOperationOneIntParamOneArrayParam)(struct Matrix*, int, const float*);
-typedef void (*VoidOperationTwoIntParams)(struct Matrix*, int, int);
-/** Return Matrix Functions **/
-typedef struct Matrix* (*MatrixOperationNoParams)(struct Matrix*);
-typedef struct Matrix* (*MatrixOperationOneMatrixParam)(struct Matrix*, struct Matrix*);
-typedef struct Matrix* (*MatrixOperationOneFloatParam)(struct Matrix*, float);
-typedef struct Matrix* (*MatrixOperationOneIntParam)(struct Matrix*, int);
-typedef struct Matrix* (*MatrixOperationOneIntParamOneArrayParam)(struct Matrix*, int, float*);
-typedef struct Matrix* (*MatrixOperationTwoIntParams)(struct Matrix*, int, int);
-/** Return Int/Float Functions **/
-typedef float (*FloatOperationNoParams)(struct Matrix*);
-typedef int (*IntOperationNoParams)(struct Matrix*);
-
 typedef struct Matrix {
-    /** Data **/
     float **_matrix;
     int _rows;
     int _columns;
-
-    /** One int param **/
-    MatrixOperationOneIntParam TrimMatrixRow;
-    VoidOperationOneIntParam TrimMatrixRow_OverrideOrigin;
-    MatrixOperationOneIntParam TrimMatrixColumn;
-    VoidOperationOneIntParam TrimMatrixColumn_OverrideOrigin;
-
-    /** One int param, one float array **/
-    MatrixOperationOneIntParamOneArrayParam ReplaceRow;
-    VoidOperationOneIntParamOneArrayParam ReplaceRow_OverrideOrigin;
-    MatrixOperationOneIntParamOneArrayParam ReplaceColumn;
-    VoidOperationOneIntParamOneArrayParam ReplaceColumn_OverrideOrigin;
-
-    /** Two int params **/
-    MatrixOperationTwoIntParams TrimMatrix;
-    VoidOperationTwoIntParams TrimMatrix_OverrideOrigin;
-    MatrixOperationTwoIntParams Reshape;
-    VoidOperationTwoIntParams Reshape_OverrideOrigin;
-
-    /** One float param **/
-    MatrixOperationOneFloatParam AddValue;
-    VoidOperationOneFloatParam AddValue_OverrideOrigin;
-    MatrixOperationOneFloatParam SubtractValue;
-    VoidOperationOneFloatParam SubtractValue_OverrideOrigin;
-    MatrixOperationOneFloatParam MultiplyByValue;
-    VoidOperationOneFloatParam MultiplyByValue_OverrideOrigin;
-    MatrixOperationOneFloatParam DivideByValue;
-    VoidOperationOneFloatParam DivideByValue_OverrideOrigin;
-
-    /** No params **/
-    VoidOperationNoParams PrintFullMatrix;
-    IntOperationNoParams GetNumOfRows;
-    IntOperationNoParams GetNumOfColumns;
-    FloatOperationNoParams Determinant;
-    MatrixOperationNoParams Copy;
-    MatrixOperationNoParams Transpose;
-    VoidOperationNoParams Transpose_OverrideOrigin;
-    MatrixOperationNoParams Inverse;
-    VoidOperationNoParams Inverse_OverrideOrigin;
-
-    /** Matrix Operations: One matrix param **/
-    MatrixOperationOneMatrixParam AddMatrix;
-    VoidOperationOneMatrixParam AddMatrix_OverrideOrigin;
-    MatrixOperationOneMatrixParam SubtractMatrix;
-    VoidOperationOneMatrixParam SubtractMatrix_OverrideOrigin;
-    MatrixOperationOneMatrixParam MultiplyMatrix;
-    VoidOperationOneMatrixParam MultiplyMatrix_OverrideOrigin;
-    MatrixOperationOneMatrixParam DivideMatrix;
-    VoidOperationOneMatrixParam DivideMatrix_OverrideOrigin;
 } Matrix;
 
 Matrix* CreateMatrix(int rows, int columns);
 void DeleteMatrix(Matrix* m);
+
+float **CreateMatrixData(int rows, int columns);
+void DeleteMatrixData(Matrix *m);
+
+/** One int param **/
+Matrix *TrimMatrixRow(Matrix *m, int row);
+void TrimMatrixRow_OverrideOrigin(Matrix *m, int row);
+Matrix *TrimMatrixColumn(Matrix *m, int column);
+void TrimMatrixColumn_OverrideOrigin(Matrix *m, int column);
+
+/** One int param, one float array **/
+Matrix *ReplaceRow(struct Matrix *m, int row, float* new_row);
+void ReplaceRow_OverrideOrigin(struct Matrix *m, int row, const float* new_row);
+Matrix *ReplaceColumn(struct Matrix *m, int column, float* new_column);
+void ReplaceColumn_OverrideOrigin(struct Matrix *m, int column, const float* new_column);
+
+/** Two int params **/
+Matrix *TrimMatrix(Matrix *m, int row, int column);
+void TrimMatrix_OverrideOrigin(Matrix *m, int row, int column);
+Matrix *Reshape(Matrix *m, int row, int column);
+void Reshape_OverrideOrigin(Matrix *m, int row, int column);
+
+/** One float param **/
+Matrix *AddValue(Matrix *m, float Value);
+void AddValue_OverrideOrigin(Matrix *m, float Value);
+Matrix *SubtractValue(Matrix *m, float Value);
+void SubtractValue_OverrideOrigin(Matrix *m, float Value);
+Matrix *MultiplyByValue(Matrix *m, float Value);
+void MultiplyByValue_OverrideOrigin(Matrix *m, float Value);
+Matrix *DivideByValue(Matrix *m, float Value);
+void DivideByValue_OverrideOrigin(Matrix *m, float Value);
+
+/** No params **/
+void PrintFullMatrix(Matrix *m);
+int GetNumOfRows(Matrix *m);
+int GetNumOfColumns(Matrix *m);
+float Determinant(Matrix *m);
+Matrix *Copy(Matrix *m);
+Matrix *Transpose(Matrix *m);
+void Transpose_OverrideOrigin(Matrix *m);
+Matrix *Inverse(Matrix *m);
+void Inverse_OverrideOrigin(Matrix *m);
+
+Matrix *AddMatrix(Matrix *m, Matrix *other_m);
+void AddMatrix_OverrideOrigin(Matrix *m, Matrix *other_m);
+Matrix *SubtractMatrix(Matrix *m, Matrix *other_m);
+void SubtractMatrix_OverrideOrigin(Matrix *m, Matrix *other_m);
+Matrix *MultiplyMatrix(Matrix *m, Matrix *other_m);
+void MultiplyMatrix_OverrideOrigin(Matrix *m, Matrix *other_m);
+Matrix *DivideMatrix(Matrix *m, Matrix *other_m);
+void DivideMatrix_OverrideOrigin(Matrix *m, Matrix *other_m);
