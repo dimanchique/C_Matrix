@@ -22,6 +22,9 @@ int main() {
     PrintFullMatrix(m);
     printf("\n");
 
+    float D = Determinant(m);
+    printf("D = %f\n", D);
+
     DeleteMatrix(m);
     return 0;
 }
